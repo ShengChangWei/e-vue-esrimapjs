@@ -1,0 +1,45 @@
+{
+  "name": "e-vue-esrimapjs",
+  "version": "0.1.9",
+  "description": "基于 vue-cli3 + javaScript 的二维地图组件，使用的地图 API 是 ArcGIS API for JavaScript v3.x（>=3.14）。",
+  "main": "lib/e-vue-esrimapjs.common.js",
+  "keywords": [
+    "vue",
+    "e-vue-esrimapjs",
+    "shengchangwei"
+  ],
+  "homepage": "https://github.com/ShengChangWei/e-vue-esrimapjs#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShengChangWei/e-vue-esrimapjs.git"
+  },
+  "scripts": {
+    "start": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lib": "vue-cli-service build --target lib --name e-vue-esrimapjs --dest lib packages/index.js"
+  },
+  "author": {
+    "name": "圣长伟",
+    "email": "2367896538@qq.com",
+    "bolg": "shengchangwei.github.io"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "vue": "^2.6.6",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.5.0",
+    "@vue/cli-plugin-eslint": "^3.5.0",
+    "@vue/cli-service": "^3.5.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.5.21"
+  }
+}
