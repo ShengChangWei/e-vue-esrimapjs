@@ -108,47 +108,47 @@ export default {
       this.initBaiduLayers();
       this.queryBoundaryLine();
     },
-    // initBaiduLayers() {
-    //   this.areaLayer = new this.baiduMapComponent.GraphicsLayer();
-    //   this.baiduMap.addLayers([this.areaLayer]);
-    //   this.areaSymbol = new this.baiduMapComponent.SimpleFillSymbol({
-    //     // 区域符号
-    //     type: 'esriSFS',
-    //     style: 'esriSFSSolid',
-    //     color: [234, 144, 62, 30],
-    //     outline: {
-    //       type: 'esriSLS',
-    //       style: 'esriSLSDash',
-    //       color: [255, 75, 160, 255],
-    //       width: 2
-    //     }
-    //   });
+    initBaiduLayers() {
+      this.areaLayer = new this.baiduMapComponent.GraphicsLayer();
+      this.baiduMap.addLayers([this.areaLayer]);
+      this.areaSymbol = new this.baiduMapComponent.SimpleFillSymbol({
+        // 区域符号
+        type: 'esriSFS',
+        style: 'esriSFSSolid',
+        color: [234, 144, 62, 30],
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSDash',
+          color: [255, 75, 160, 255],
+          width: 2
+        }
+      });
 
-    //   const [x, y] = this.baiduMapComponent.WebMercatorUtils.lngLatToXY(
-    //     116.300147,
-    //     40.0518
-    //   );
-    //   const point = new this.baiduMapComponent.Point(
-    //     12948011.6,
-    //     4846782.36,
-    //     new this.baiduMapComponent.SpatialReference({ wkid: 3857 })
-    //   );
-    //   const symbol = new this.baiduMapComponent.SimpleMarkerSymbol({
-    //     // 点符号
-    //     color: [255, 153, 0],
-    //     size: 40,
-    //     type: 'esriSMS',
-    //     style: 'esriSMSCircle',
-    //     outline: {
-    //       type: 'esriSLS',
-    //       style: 'esriSLSSolid',
-    //       color: [255, 255, 255],
-    //       width: 1
-    //     }
-    //   });
-    //   const dataGra = new this.baiduMapComponent.Graphic(point, symbol);
-    //   this.areaLayer.add(dataGra);
-    // },
+      const [x, y] = this.baiduMapComponent.WebMercatorUtils.lngLatToXY(
+        116.312555,
+        40.059036
+      );
+      const point = new this.baiduMapComponent.Point(
+        116.3,
+        40.051697222222224,
+        this.baiduMap.SpatialReference
+      );
+      const symbol = new this.baiduMapComponent.SimpleMarkerSymbol({
+        // 点符号
+        color: [255, 153, 0],
+        size: 10,
+        type: 'esriSMS',
+        style: 'esriSMSCircle',
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSSolid',
+          color: [255, 255, 255],
+          width: 1
+        }
+      });
+      const dataGra = new this.baiduMapComponent.Graphic(point, symbol);
+      this.areaLayer.add(dataGra);
+    },
 
     // initGoogleLayers() {
     //   this.areaLayer = new this.googleMapComponent.GraphicsLayer();
@@ -167,8 +167,8 @@ export default {
     //   });
 
     //   const [x, y] = this.googleMapComponent.WebMercatorUtils.lngLatToXY(
-    //     116.3972282409668,
-    //     39.90960456049752
+    //     116.29972222222223,
+    //     40.04611111111111
     //   );
     //   const point = new this.googleMapComponent.Point(
     //     x,
@@ -191,26 +191,66 @@ export default {
     //   const dataGra = new this.googleMapComponent.Graphic(point, symbol);
     //   this.areaLayer.add(dataGra);
     // },
-    // /**
-    //  *
-    //  * 边界查询（县界和乡镇区域）
-    //  */
-    // queryBoundaryLine() {
-    //   const query = new this.baiduMapComponent.Query();
-    //   query.where = '2 > 1';
-    //   query.outSpatialReference = this.baiduMap.spatialReference;
-    //   query.returnGeometry = true;
-    //   query.outFields = ['*'];
-    //   const areaQueryTask = new this.baiduMapComponent.QueryTask(
-    //     'http://123.56.211.120:9999/arcgis/rest/services/HD_RCS_MAP/MapServer/4'
-    //   );
-    //   areaQueryTask.execute(query, areas => {
-    //     areas.features.forEach(area => {
-    //       area.symbol = this.areaSymbol;
-    //       this.areaLayer.add(area);
-    //     });
-    //   });
-    // },
+    initTdtLayers() {
+      this.areaLayer = new this.tdtMapComponent.GraphicsLayer();
+      this.tdtMap.addLayers([this.areaLayer]);
+      this.areaSymbol = new this.tdtMapComponent.SimpleFillSymbol({
+        // 区域符号
+        type: 'esriSFS',
+        style: 'esriSFSSolid',
+        color: [234, 144, 62, 30],
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSDash',
+          color: [255, 75, 160, 255],
+          width: 2
+        }
+      });
+
+      // const [x, y] = this.tdtMapComponent.WebMercatorUtils.lngLatToXY(
+
+      // );
+      const point = new this.tdtMapComponent.Point(
+        116.3,
+        40.051697222222224,
+        this.tdtMap.spatialReference
+      );
+      const symbol = new this.tdtMapComponent.SimpleMarkerSymbol({
+        // 点符号
+        color: [255, 153, 0],
+        size: 10,
+        type: 'esriSMS',
+        style: 'esriSMSCircle',
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSSolid',
+          color: [255, 255, 255],
+          width: 1
+        }
+      });
+      const dataGra = new this.tdtMapComponent.Graphic(point, symbol);
+      this.areaLayer.add(dataGra);
+    },
+    /**
+     *
+     * 边界查询（县界和乡镇区域）
+     */
+    queryBoundaryLine() {
+      const query = new this.baiduMapComponent.Query();
+      query.where = '2 > 1';
+      query.outSpatialReference = this.baiduMap.spatialReference;
+      query.returnGeometry = true;
+      query.outFields = ['*'];
+      const areaQueryTask = new this.baiduMapComponent.QueryTask(
+        'http://123.56.211.120:9999/arcgis/rest/services/HD_RCS_MAP/MapServer/4'
+      );
+      areaQueryTask.execute(query, areas => {
+        areas.features.forEach(area => {
+          area.symbol = this.areaSymbol;
+          this.areaLayer.add(area);
+        });
+      });
+    },
     onBaiduBaseLayerChange() {},
     /**
      * 谷歌地图加载完成
@@ -234,7 +274,8 @@ export default {
     onTdtMapReady(event) {
       this.tdtMapComponent = event;
       this.tdtMap = this.tdtMapComponent.map;
-      this.tdtMapComponent.setExtent(this.initExtent);
+      // this.tdtMapComponent.setExtent(this.initExtent);
+      this.initTdtLayers();
     },
     onTdtBaseLayerChange($event) {},
 
