@@ -350,7 +350,7 @@ export default {
         logo: false,
         slider: false
       });
-      this.$emit('mapReady', this);
+      // this.$emit('mapReady', this);
       // 加载底图
       if (this.mapType === 'tdt') {
         // 初始底图
@@ -638,7 +638,7 @@ export default {
      * @returns {Promise<T>}
      */
     getBaiduLayer(layers = []) {
-      console.log(layers);
+    
       return new Promise((resolve) => {
         const tileInfo = new this.TileInfo({
             rows: 256,
@@ -839,7 +839,8 @@ export default {
         }
       );
       this.map.addLayer(cycleMapLabel);
-      this.setExtent(this.newInitExtent)
+      this.setExtent(this.newInitExtent);
+      this.$emit('mapReady', this);
     },
     // 加载其他组件
     getOtherLayer() {},
@@ -893,11 +894,11 @@ export default {
         if (this.newInitExtent) {
           this.fit = true;
           this.setExtent(this.newInitExtent, this.fit).then(() => {
-            // this.$emit('mapReady', this);
+            this.$emit('mapReady', this);
           });
         } else {
           this.newInitExtent = this.map.extent;
-          // this.$emit('mapReady', this);
+          this.$emit('mapReady', this);
         }
       });
 

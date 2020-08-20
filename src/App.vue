@@ -41,6 +41,13 @@
                      @baseLayerChange="onTdtBaseLayerChange($event)"
                      @mapReady="onTdtMapReady($event)">
     </e-vue-esrimapjs>
+    <h2>maxBox暗黑底图</h2>
+    <e-vue-esrimapjs :mapType="'mapBox'"
+                     :geoUrl="geoUrl"
+                     :initExtent="initExtent2"
+                     :gisApiUrl="gisApiUrl"
+                     @mapReady="onBoxMapReady($event)">
+    </e-vue-esrimapjs>
     <h2>ArcGIS地图服务</h2>
     <button @click="esriMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="esriMapComponent.changeBaseLayer(1)">切换底图2</button>
@@ -230,6 +237,7 @@ export default {
       });
       const dataGra = new this.tdtMapComponent.Graphic(point, symbol);
       this.areaLayer.add(dataGra);
+      // this.queryBoundaryLine();
     },
     /**
      *
@@ -244,8 +252,8 @@ export default {
       const areaQueryTask = new this.baiduMapComponent.QueryTask(
         'http://123.56.211.120:9999/arcgis/rest/services/HD_RCS_MAP/MapServer/4'
       );
-      areaQueryTask.execute(query, areas => {
-        areas.features.forEach(area => {
+      areaQueryTask.execute(query, (areas) => {
+        areas.features.forEach((area) => {
           area.symbol = this.areaSymbol;
           this.areaLayer.add(area);
         });
@@ -267,6 +275,9 @@ export default {
      * @param {number} $event
      */
     onGoogleBaseLayerChange($event) {},
+    onBoxMapReady(event) {
+     
+    },
     /**
      * 天地图地图加载完成
      * @param $event
