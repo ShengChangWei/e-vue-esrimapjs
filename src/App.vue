@@ -106,7 +106,7 @@ export default {
       this.baiduMapComponent = $event;
       this.baiduMap = this.baiduMapComponent.map;
       this.initBaiduLayers();
-      this.queryBoundaryLine();
+      // this.queryBoundaryLine();
     },
     initBaiduLayers() {
       this.areaLayer = new this.baiduMapComponent.GraphicsLayer();

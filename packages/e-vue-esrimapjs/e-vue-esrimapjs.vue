@@ -63,7 +63,7 @@ export default {
     },
     submapUrl: {
       type: Array,
-      default: function() {
+      default: function () {
         return [
           'http://server.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer'
         ];
@@ -71,7 +71,7 @@ export default {
     },
     initExtent: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           xmax: 106.39029888900006,
           xmin: 116.04209077900009,
@@ -168,7 +168,7 @@ export default {
       .then(() => {
         this.init();
       })
-      .catch(e => {
+      .catch((e) => {
         if (e.message === 'The ArcGIS API for JavaScript is already loaded.') {
           this.init();
         } else {
@@ -350,7 +350,7 @@ export default {
         logo: false,
         slider: false
       });
-
+      this.$emit('mapReady', this);
       // 加载底图
       if (this.mapType === 'tdt') {
         // 初始底图
@@ -381,7 +381,7 @@ export default {
         });
       } else if (this.mapType === 'google') {
         // 初始底图
-        this.getGoogleLayer(this.mapUrl).then(layer => {
+        this.getGoogleLayer(this.mapUrl).then((layer) => {
           const googleMapLayerId = `${this.mapType}_base_0`;
           this.basemapIds.push(googleMapLayerId);
           layer.id = googleMapLayerId;
@@ -390,7 +390,7 @@ export default {
 
         // 切换的其它底图
         this.submapUrl.forEach((submap, index) => {
-          this.getGoogleLayer(submap).then(layer => {
+          this.getGoogleLayer(submap).then((layer) => {
             const googleMapLayerId = `${this.mapType}_base_${index + 1}`;
             this.basemapIds.push(googleMapLayerId);
             layer.id = googleMapLayerId;
@@ -399,7 +399,6 @@ export default {
           });
         });
       } else if (this.mapType === 'baidu') {
-        console.log(this.mapUrl);
         this.getBaiduLayer(this.mapUrl).then((layers = []) => {
           const baseamapLayerIds = [];
           layers.forEach((layer, index) => {
@@ -412,7 +411,6 @@ export default {
         this.submapUrl.forEach((submap = []) => {
           this.getBaiduLayer(Array.isArray(submap) ? submap : [submap]).then(
             (layers = []) => {
-              console.log(layers);
               const baseamapLayerIds = [];
               layers.forEach((layer, index) => {
                 layer.setVisibility(false);
@@ -423,33 +421,11 @@ export default {
             }
           );
         });
-      } else if (this.mapType === 'gd') {
+      } else if (this.mapType === 'mapBox') {
         // 初始底图
-        this.getGDLayer(
-          Array.isArray(this.mapUrl) ? this.mapUrl : [this.mapUrl]
-        ).then((layers = []) => {
-          const baseamapLayerIds = [];
-          layers.forEach((layer, index) => {
-            baseamapLayerIds.push(layer.id);
-            this.map.addLayer(layer);
-          });
-          this.basemapIds.push(baseamapLayerIds);
-        });
-
-        // 切换的其它底图
-        this.submapUrl.forEach((submap = []) => {
-          this.getTdtLayer(Array.isArray(submap) ? submap : [submap]).then(
-            (layers = []) => {
-              const baseamapLayerIds = [];
-              layers.forEach((layer, index) => {
-                layer.setVisibility(false);
-                baseamapLayerIds.push(layer.id);
-                this.map.addLayer(layer);
-              });
-              this.basemapIds.push(baseamapLayerIds);
-            }
-          );
-        });
+        this.getMapboxLayer();
+      } else if (this.mapType === 'other') {
+        this.getOtherLayer();
       } else if (this.mapType === 'esri') {
         // 初始底图
         const esriBasemapLayerId = `${this.mapType}_base_0`,
@@ -479,7 +455,7 @@ export default {
      * @returns {Promise<T>}
      */
     getTdtLayer(layers = []) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const tileInfo = new this.TileInfo({
             rows: 256,
             cols: 256,
@@ -565,7 +541,7 @@ export default {
           }),
           subDomains = ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
           tdtLayers = [];
-        layers.forEach(type => {
+        layers.forEach((type) => {
           const templateUrl =
             'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
             type +
@@ -588,7 +564,7 @@ export default {
      * @returns {Promise<T>}
      */
     getGoogleLayer(layer) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const tileInfo = new this.TileInfo({
             rows: 256,
             cols: 256,
@@ -663,7 +639,7 @@ export default {
      */
     getBaiduLayer(layers = []) {
       console.log(layers);
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const tileInfo = new this.TileInfo({
             rows: 256,
             cols: 256,
@@ -778,11 +754,12 @@ export default {
               }
             ]
           }),
+          //  templateUrl =
+          //   'http://api0.map.bdimg.com/customimage/tile?=&x=${col}&y=${row}&z=${level}&scale=1&customid=midnight',
           templateUrl =
             'http://maponline0.bdimg.com/tile/?qt=vtile&x=${col}&y=${row}&z=${level}&styles=pl&scaler=1',
           baiduLayers = [];
-        layers.forEach(layer => {
-          console.log(layer);
+        layers.forEach((layer) => {
           const baiduLayer = new this.WebTiledLayer(templateUrl, {
             id: 'baidu_' + layer,
             tileInfo: tileInfo
@@ -821,12 +798,15 @@ export default {
                 break;
               default:
                 templateUrl =
-                  'http://111.207.30.155/env-101/por-301/bdapis/runtime/tile?&x=' +
+                  'http://online' +
+                  num +
+                  '.map.bdimg.com/tile/?qt=tile&x=' +
                   numX +
                   '&y=' +
                   numY +
                   '&z=' +
-                  zoom;
+                  zoom +
+                  '&styles=pl&scaler=1&udt=20141103';
                 break;
             }
             return templateUrl;
@@ -837,80 +817,32 @@ export default {
       });
     },
     /**
-     * 获取天地图图层
+     * 获取其他图层
      * @param layers 图层的代码
      * @returns {Promise<T>}
      */
-    getGDLayer(layers = []) {
-      return new Promise(resolve => {
-        const tileInfo = new this.TileInfo({
-            rows: 256,
-            cols: 256,
-            compressionQuality: 0,
-            origin: {
-              x: -20037508.342787,
-              y: 20037508.342787
-            },
-            spatialReference: {
-              wkid: 102100
-            },
-            lods: [
-              { level: 0, resolution: 156543.033928, scale: 591657527.591555 },
-              {
-                level: 1,
-                resolution: 78271.5169639999,
-                scale: 295828763.795777
-              },
-              {
-                level: 2,
-                resolution: 39135.7584820001,
-                scale: 147914381.897889
-              },
-              {
-                level: 3,
-                resolution: 19567.8792409999,
-                scale: 73957190.948944
-              },
-              {
-                level: 4,
-                resolution: 9783.93962049996,
-                scale: 36978595.474472
-              },
-              {
-                level: 5,
-                resolution: 4891.96981024998,
-                scale: 18489297.737236
-              },
-              { level: 6, resolution: 2445.98490512499, scale: 9244648.868618 },
-              { level: 7, resolution: 1222.99245256249, scale: 4622324.434309 },
-              { level: 8, resolution: 611.49622628138, scale: 2311162.217155 },
-              { level: 9, resolution: 305.748113140558, scale: 1155581.108577 },
-              { level: 10, resolution: 152.874056570411, scale: 577790.554289 },
-              { level: 11, resolution: 76.4370282850732, scale: 288895.277144 },
-              { level: 12, resolution: 38.2185141425366, scale: 144447.638572 },
-              { level: 13, resolution: 19.1092570712683, scale: 72223.819286 },
-              { level: 14, resolution: 9.55462853563415, scale: 36111.909643 },
-              { level: 15, resolution: 4.77731426794937, scale: 18055.954822 },
-              { level: 16, resolution: 2.38865713397468, scale: 9027.977411 },
-              { level: 17, resolution: 1.19432856685505, scale: 4513.988705 },
-              { level: 18, resolution: 0.597164283559817, scale: 2256.994353 },
-              { level: 19, resolution: 0.298582141647617, scale: 1128.497176 }
-            ]
-          }),
-          // subDomains = ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
-          gdLayers = [];
-        layers.forEach(type => {
-          const templateUrl =
-            'http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={col}&y={row}&z={level}';
-          const gdLayer = new this.WebTiledLayer(templateUrl, {
-            id: 'tdt_' + type,
-            tileInfo: tileInfo
-          });
-          gdLayers.push(gdLayer);
-        });
-        resolve(gdLayers);
-      });
+    getMapboxLayer(layers = []) {
+      const cycleMap = new this.WebTiledLayer(
+        'https://${subDomain}.tiles.mapbox.com/v4/mapbox.dark/${level}/${col}/${row}.png?access_token=pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ',
+        {
+          subDomains: ['a', 'b', 'c']
+        }
+      );
+      this.map.addLayer(cycleMap);
+      var cycleMapLabel = new this.WebTiledLayer(
+        'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
+          'cia_w' +
+          '_c&X=${col}&Y=${row}&L=${level}&tk=' +
+          this.tdtTK,
+        {
+          subDomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
+        }
+      );
+      this.map.addLayer(cycleMapLabel);
+      this.setExtent(this.newInitExtent)
     },
+    // 加载其他组件
+    getOtherLayer() {},
 
     /**
      * 底图切换
@@ -923,7 +855,7 @@ export default {
             const prevBaseLayerIndex = this.currBaseLayerIndex;
             this.currBaseLayerIndex = layerIndex;
             if (Array.isArray(mapIds)) {
-              mapIds.forEach(id => {
+              mapIds.forEach((id) => {
                 this.map.getLayer(id).setVisibility(true);
               });
             } else {
@@ -935,7 +867,7 @@ export default {
             });
           } else {
             if (Array.isArray(mapIds)) {
-              mapIds.forEach(id => {
+              mapIds.forEach((id) => {
                 this.map.getLayer(id).setVisibility(false);
               });
             } else {
@@ -961,15 +893,15 @@ export default {
         if (this.newInitExtent) {
           this.fit = true;
           this.setExtent(this.newInitExtent, this.fit).then(() => {
-            this.$emit('mapReady', this);
+            // this.$emit('mapReady', this);
           });
         } else {
           this.newInitExtent = this.map.extent;
-          this.$emit('mapReady', this);
+          // this.$emit('mapReady', this);
         }
       });
 
-      this.map.on('extent-change', event => {
+      this.map.on('extent-change', (event) => {
         this.isMax = this.map.getZoom() >= this.map.getMaxZoom();
         this.isMin = this.map.getZoom() <= this.map.getMinZoom();
         this.$emit('exentChange', event);
@@ -1033,24 +965,24 @@ export default {
       const gp = new this.Geoprocessor(params.url);
       gp.submitJob(
         params.inParamVal,
-        jobInfo => {
+        (jobInfo) => {
           gp.getResultData(
             jobInfo.jobId,
             params.outParamName,
-            result => {
+            (result) => {
               params.success(result);
             },
-            error => {
+            (error) => {
               params.error(error);
             }
           );
         },
-        jobInfo => {
+        (jobInfo) => {
           if (params.status) {
             params.status(jobInfo);
           }
         },
-        error => {
+        (error) => {
           params.error(error);
         }
       );
@@ -1063,27 +995,27 @@ export default {
       const gp = new this.Geoprocessor(params.url);
       gp.submitJob(
         params.inParamVal,
-        jobInfo => {
+        (jobInfo) => {
           const imageParameters = new this.ImageParameters();
           imageParameters.imageSpatialReference = this.map.spatialReference;
           gp.getResultImageLayer(
             jobInfo.jobId,
             params.outParamName,
             imageParameters,
-            result => {
+            (result) => {
               params.success(result);
             },
-            error => {
+            (error) => {
               params.error(error);
             }
           );
         },
-        jobInfo => {
+        (jobInfo) => {
           if (params.status) {
             params.status(jobInfo);
           }
         },
-        error => {
+        (error) => {
           params.error(error);
         }
       );
