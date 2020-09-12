@@ -26,6 +26,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "echarts": "^4.9.0",
     "font-awesome": "^4.7.0",
     "vue": "^2.6.6"
   },

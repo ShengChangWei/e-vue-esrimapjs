@@ -150,6 +150,7 @@ export default {
       SimpleFillSymbol: '',
       TextSymbol: '',
       Font: '',
+      EchartsLayer: null,
 
       // toolbar
       Draw: '',
@@ -162,6 +163,8 @@ export default {
     };
   },
   mounted() {
+    // console.log(echarts)
+    // console.log(Echarts3Layer);
     this.addEsriMapCss();
     this.eVueErimapLoader
       .load({ url: this.gisApiUrl })
@@ -423,7 +426,9 @@ export default {
         });
       } else if (this.mapType === 'mapBox') {
         // 初始底图
-        this.getMapboxLayer();
+        this.getMapboxLayer().then((layers) => {
+          this.map.addLayer(layers);
+        });
       } else if (this.mapType === 'other') {
         this.getOtherLayer();
       } else if (this.mapType === 'esri') {
@@ -638,7 +643,6 @@ export default {
      * @returns {Promise<T>}
      */
     getBaiduLayer(layers = []) {
-    
       return new Promise((resolve) => {
         const tileInfo = new this.TileInfo({
             rows: 256,
@@ -822,25 +826,16 @@ export default {
      * @returns {Promise<T>}
      */
     getMapboxLayer(layers = []) {
-      const cycleMap = new this.WebTiledLayer(
-        'https://${subDomain}.tiles.mapbox.com/v4/mapbox.dark/${level}/${col}/${row}.png?access_token=pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ',
-        {
-          subDomains: ['a', 'b', 'c']
-        }
-      );
-      this.map.addLayer(cycleMap);
-      var cycleMapLabel = new this.WebTiledLayer(
-        'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
-          'cia_w' +
-          '_c&X=${col}&Y=${row}&L=${level}&tk=' +
-          this.tdtTK,
-        {
-          subDomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
-        }
-      );
-      this.map.addLayer(cycleMapLabel);
-      this.setExtent(this.newInitExtent);
-      this.$emit('mapReady', this);
+      return new Promise((resolve) => {
+        const subDomains = ['a', 'b', 'c'],
+          templateUrl =
+            'https://${subDomain}.tiles.mapbox.com/v4/mapbox.dark/${level}/${col}/${row}.png?access_token=pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ',
+          mapBoxLayer = new this.WebTiledLayer(templateUrl, {
+            id: 'mapBox',
+            subDomains: subDomains
+          });
+        resolve(mapBoxLayer);
+      });
     },
     // 加载其他组件
     getOtherLayer() {},

@@ -77,6 +77,13 @@
                      @baseLayerChange="onEsriBaseLayerChange($event)"
                      @mapReady="onEsriMapReady($event)">
     </e-vue-esrimapjs>
+     <h2>maxBox暗黑底图</h2>
+    <e-vue-esrimapjs :mapType="'mapBox'"
+                     :geoUrl="geoUrl"
+                     :initExtent="initExtent2"
+                     :gisApiUrl="gisApiUrl"
+                     @mapReady="onBoxMapReady($event)">
+    </e-vue-esrimapjs>
   </div>
 </template>
 ```
@@ -170,7 +177,21 @@
      * esri底图切换
      * @param {number} $event
      */
-    onEsriBaseLayerChange($event) {}
+    onEsriBaseLayerChange($event) {},
+
+    onBoxMapReady(event) {
+    // 添加天地图的label
+    var cycleMapLabel = new event.WebTiledLayer(
+      'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
+        'cia_w' +
+        '_c&X=${col}&Y=${row}&L=${level}&tk=8e1a3b0631a1057635c6cc28bece1e31',
+      {
+        subDomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
+      }
+    );
+    event.map.addLayer(cycleMapLabel);
+  },
+
   }
 ```
 
