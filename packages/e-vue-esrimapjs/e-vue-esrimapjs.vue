@@ -548,10 +548,15 @@ export default {
           tdtLayers = [];
         layers.forEach((type) => {
           const templateUrl =
-            'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
+            'https://${subDomain}.tianditu.gov.cn/DataServer?T=' +
             type +
             '_c&X=${col}&Y=${row}&L=${level}&tk=' +
             this.tdtTK;
+            //  const templateUrl =
+            // 'https://iessence.com.cn/tianditu${subDomain}/?T=' +
+            // type +
+            // '_c&X=${col}&Y=${row}&L=${level}&tk=' +
+            // this.tdtTK;
           const tdtLayer = new this.WebTiledLayer(templateUrl, {
             id: 'tdt_' + type,
             subDomains: subDomains,

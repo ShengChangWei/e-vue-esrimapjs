@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- <button @click="print">打印</button> -->
+    <button @click="print">打印</button>
     <h2>百度底图</h2>
     <button @click="baiduMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="baiduMapComponent.changeBaseLayer(1)">切换底图2</button>
@@ -66,7 +66,6 @@
 </template>
 
 <script>
-// import EVueContextmenu from './../packages/index.js'
 export default {
   name: 'app',
   components: {},
