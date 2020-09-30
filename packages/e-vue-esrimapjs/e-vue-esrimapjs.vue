@@ -470,7 +470,7 @@ export default {
               y: 90
             },
             spatialReference: {
-              wkid: 102100
+              wkid: 4326
             },
             lods: [
               { level: 2, resolution: 0.3515625, scale: 147748796.52937502 },
@@ -631,7 +631,7 @@ export default {
           }),
           subDomains = ['mt0', 'mt1', 'mt2', 'mt3'],
           templateUrl =
-            'http://${subDomain}.google.cn/vt/lyrs=' +
+            'https://${subDomain}.google.cn/vt/lyrs=' +
             layer +
             '&hl=zh-CN&gl=cn&x=${col}&y=${row}&z=${level}&s=Gali',
           googleLayer = new this.WebTiledLayer(templateUrl, {

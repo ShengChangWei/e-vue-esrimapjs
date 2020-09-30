@@ -276,7 +276,7 @@ export default {
     onGoogleBaseLayerChange($event) {},
     onBoxMapReady(event) {
       var cycleMapLabel = new event.WebTiledLayer(
-        'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
+        'https://${subDomain}.tianditu.gov.cn/DataServer?T=' +
           'cia_w' +
           '_c&X=${col}&Y=${row}&L=${level}&tk=8e1a3b0631a1057635c6cc28bece1e31',
         {
