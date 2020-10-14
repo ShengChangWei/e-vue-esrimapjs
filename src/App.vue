@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <button @click="print">打印</button>
     <h2>百度底图</h2>
     <button @click="baiduMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="baiduMapComponent.changeBaseLayer(1)">切换底图2</button>
@@ -37,15 +36,21 @@
                      :geoUrl="geoUrl"
                      :initExtent="initExtent"
                      :gisApiUrl="gisApiUrl"
-                     tdtTK="8e1a3b0631a1057635c6cc28bece1e31"
+                     token="8e1a3b0631a1057635c6cc28bece1e31"
                      @baseLayerChange="onTdtBaseLayerChange($event)"
                      @mapReady="onTdtMapReady($event)">
     </e-vue-esrimapjs>
-    <h2>maxBox暗黑底图</h2>
+    <h2>maxBox底图服务</h2>
+    <button @click="boxMapComponent.changeBaseLayer(0)">切换底图1</button>
+    <button @click="boxMapComponent.changeBaseLayer(1)">切换底图2</button>
+    <button @click="boxMapComponent.changeBaseLayer(2)">切换底图3</button>
     <e-vue-esrimapjs :mapType="'mapBox'"
+                     :mapUrl="['navigation-guidance-night-v2']"
+                     :submapUrl="['streets-v10', 'satellite-v9']"
                      :geoUrl="geoUrl"
                      :initExtent="initExtent2"
                      :gisApiUrl="gisApiUrl"
+                     token="pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NDg1bDA1cjYzM280NHJ5NzlvNDMifQ.d6e-nNyBDtmQCVwVNivz7A"
                      @mapReady="onBoxMapReady($event)">
     </e-vue-esrimapjs>
     <h2>ArcGIS地图服务</h2>
@@ -77,6 +82,8 @@ export default {
       googleMap: '',
       tdtMapComponent: '',
       tdtMap: '',
+      boxMapComponent: '',
+      boxMap: '',
       esriMapComponent: '',
       esriMap: '',
       mapUrl:
@@ -274,16 +281,9 @@ export default {
      * @param {number} $event
      */
     onGoogleBaseLayerChange($event) {},
-    onBoxMapReady(event) {
-      var cycleMapLabel = new event.WebTiledLayer(
-        'https://${subDomain}.tianditu.gov.cn/DataServer?T=' +
-          'cia_w' +
-          '_c&X=${col}&Y=${row}&L=${level}&tk=8e1a3b0631a1057635c6cc28bece1e31',
-        {
-          subDomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
-        }
-      );
-      event.map.addLayer(cycleMapLabel);
+    onBoxMapReady($event) {
+      this.boxMapComponent = $event;
+      this.boxMap = this.baiduMapComponent.map;
     },
     /**
      * 天地图地图加载完成

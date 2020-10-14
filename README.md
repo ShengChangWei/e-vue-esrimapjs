@@ -59,9 +59,23 @@
                      :geoUrl="geoUrl"
                      :initExtent="initExtent"
                      :gisApiUrl="gisApiUrl"
-                     tdtTK="8e1a3b0631a1057635c6cc28bece1e31"
+                     token="8e1a3b0631a1057635c6cc28bece1e31"
                      @baseLayerChange="onTdtBaseLayerChange($event)"
                      @mapReady="onTdtMapReady($event)">
+    </e-vue-esrimapjs>
+    <h2>mapBox底图服务</h2>
+    <button @click="boxMapComponent.changeBaseLayer(0)">切换底图1</button>
+    <button @click="boxMapComponent.changeBaseLayer(1)">切换底图2</button>
+    <button @click="boxMapComponent.changeBaseLayer(2)">切换底图3</button>
+    <!-- mapBox mapUrl，submapUrl 有['satellite-streets-v10', 'navigation-preview-day-v2', 'navigation-preview-night-v2']等 参数详见 http://www.mapbox.cn/mapbox-gl-js/api/  -->
+    <e-vue-esrimapjs :mapType="'mapBox'"
+                     :mapUrl="['navigation-guidance-night-v2']"
+                     :submapUrl="['streets-v10', 'satellite-v9']"
+                     :geoUrl="geoUrl"
+                     :initExtent="initExtent2"
+                     :gisApiUrl="gisApiUrl"
+                     token="pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NDg1bDA1cjYzM280NHJ5NzlvNDMifQ.d6e-nNyBDtmQCVwVNivz7A"
+                     @mapReady="onBoxMapReady($event)">
     </e-vue-esrimapjs>
     <h2>ArcGIS地图服务</h2>
     <button @click="esriMapComponent.changeBaseLayer(0)">切换底图1</button>
@@ -76,13 +90,6 @@
                      :esriCSSUrl="esriCSSUrl"
                      @baseLayerChange="onEsriBaseLayerChange($event)"
                      @mapReady="onEsriMapReady($event)">
-    </e-vue-esrimapjs>
-     <h2>maxBox暗黑底图</h2>
-    <e-vue-esrimapjs :mapType="'mapBox'"
-                     :geoUrl="geoUrl"
-                     :initExtent="initExtent2"
-                     :gisApiUrl="gisApiUrl"
-                     @mapReady="onBoxMapReady($event)">
     </e-vue-esrimapjs>
   </div>
 </template>
@@ -178,19 +185,14 @@
      * @param {number} $event
      */
     onEsriBaseLayerChange($event) {},
-
-    onBoxMapReady(event) {
-    // 添加天地图的label
-    var cycleMapLabel = new event.WebTiledLayer(
-      'http://${subDomain}.tianditu.gov.cn/DataServer?T=' +
-        'cia_w' +
-        '_c&X=${col}&Y=${row}&L=${level}&tk=8e1a3b0631a1057635c6cc28bece1e31',
-      {
-        subDomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
-      }
-    );
-    event.map.addLayer(cycleMapLabel);
-  },
+     /**
+     * mapBox地图加载完成
+     * @param {number} $event
+     */
+    onBoxMapReady($event) {
+        this.boxMapComponent = $event;
+        this.boxMap = this.baiduMapComponent.map;
+      },
 
   }
 ```

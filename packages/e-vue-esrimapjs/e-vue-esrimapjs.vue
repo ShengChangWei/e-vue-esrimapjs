@@ -88,10 +88,11 @@ export default {
       type: Boolean,
       default: true
     },
-    tdtTK: {
+    token: {
       type: String,
       default: '8e1a3b0631a1057635c6cc28bece1e31'
-    }
+    },
+    
   },
   data() {
     return {
@@ -425,10 +426,32 @@ export default {
           );
         });
       } else if (this.mapType === 'mapBox') {
-        // 初始底图
-        this.getMapboxLayer().then((layers) => {
-          this.map.addLayer(layers);
+        this.getMapboxLayer(this.mapUrl).then((layers = []) => {
+          const baseamapLayerIds = [];
+          layers.forEach((layer, index) => {
+            baseamapLayerIds.push(layer.id);
+            this.map.addLayer(layer);
+          });
+          this.basemapIds.push(baseamapLayerIds);
         });
+        // 切换的其它底图
+        this.submapUrl.forEach((submap = []) => {
+          this.getMapboxLayer(Array.isArray(submap) ? submap : [submap]).then(
+            (layers = []) => {
+              const baseamapLayerIds = [];
+              layers.forEach((layer, index) => {
+                layer.setVisibility(false);
+                baseamapLayerIds.push(layer.id);
+                this.map.addLayer(layer);
+              });
+              this.basemapIds.push(baseamapLayerIds);
+            }
+          );
+        });
+        // // 初始底图
+        // this.getMapboxLayer().then((layers) => {
+        //   this.map.addLayer(layers);
+        // });
       } else if (this.mapType === 'other') {
         this.getOtherLayer();
       } else if (this.mapType === 'esri') {
@@ -551,12 +574,12 @@ export default {
             'https://${subDomain}.tianditu.gov.cn/DataServer?T=' +
             type +
             '_c&X=${col}&Y=${row}&L=${level}&tk=' +
-            this.tdtTK;
-            //  const templateUrl =
-            // 'https://iessence.com.cn/tianditu${subDomain}/?T=' +
-            // type +
-            // '_c&X=${col}&Y=${row}&L=${level}&tk=' +
-            // this.tdtTK;
+            this.token;
+          //  const templateUrl =
+          // 'https://iessence.com.cn/tianditu${subDomain}/?T=' +
+          // type +
+          // '_c&X=${col}&Y=${row}&L=${level}&tk=' +
+          // this.tdtTK;
           const tdtLayer = new this.WebTiledLayer(templateUrl, {
             id: 'tdt_' + type,
             subDomains: subDomains,
@@ -825,21 +848,43 @@ export default {
         resolve(baiduLayers);
       });
     },
+    // /**
+    //  * 获取其他图层
+    //  * @param layers 图层的代码
+    //  * @returns {Promise<T>}
+    //  */
+    // getMapboxLayer(layers = []) {
+    //   return new Promise((resolve) => {
+    //     const subDomains = ['a', 'b', 'c'],
+    //       templateUrl =
+    //         'https://${subDomain}.tiles.mapbox.com/v4/mapbox.dark/${level}/${col}/${row}.png?access_token=pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ',
+    //       mapBoxLayer = new this.WebTiledLayer(templateUrl, {
+    //         id: 'mapBox',
+    //         subDomains: subDomains
+    //       });
+    //     resolve(mapBoxLayer);
+    //   });
+    // },
     /**
      * 获取其他图层
      * @param layers 图层的代码
      * @returns {Promise<T>}
      */
-    getMapboxLayer(layers = []) {
+    getMapboxLayer(layers) {
       return new Promise((resolve) => {
-        const subDomains = ['a', 'b', 'c'],
-          templateUrl =
-            'https://${subDomain}.tiles.mapbox.com/v4/mapbox.dark/${level}/${col}/${row}.png?access_token=pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ',
-          mapBoxLayer = new this.WebTiledLayer(templateUrl, {
-            id: 'mapBox',
-            subDomains: subDomains
-          });
-        resolve(mapBoxLayer);
+        const mabBoxLayers = [];
+        layers.forEach((layer) => {
+          const templateUrl =
+              'https://api.mapbox.com/styles/v1/mapbox/' +
+              layer +
+              '/tiles/${level}/${col}/${row}@2x?access_token=' + this.token,
+            mapBoxLayer = new this.WebTiledLayer(templateUrl, {
+              id: 'mapBox' + layer
+              // subDomains: subDomains
+            });
+          mabBoxLayers.push(mapBoxLayer);
+        });
+        resolve(mabBoxLayers);
       });
     },
     // 加载其他组件
