@@ -68,6 +68,7 @@
     <button @click="boxMapComponent.changeBaseLayer(1)">切换底图2</button>
     <button @click="boxMapComponent.changeBaseLayer(2)">切换底图3</button>
     <!-- mapBox mapUrl，submapUrl 有['satellite-streets-v10', 'navigation-preview-day-v2', 'navigation-preview-night-v2']等 参数详见 http://www.mapbox.cn/mapbox-gl-js/api/  -->
+    <!-- mapBox 也可自定义底图样式，需要申请账号，格外添加参数 mapBoxUser="自己的用户名"，token值替换成自己的，将自定义好的风格id赋值给mapUrl即可 自定义底图地址：https://studio.mapbox.com/  -->
     <e-vue-esrimapjs :mapType="'mapBox'"
                      :mapUrl="['navigation-guidance-night-v2']"
                      :submapUrl="['streets-v10', 'satellite-v9']"
@@ -218,6 +219,10 @@
 - `esriCSSUrl`（`string?='http://js.arcgis.com/3.23/esri/css/esri.css'`） - esri.css 路径，默认是在线路径，最好配置自己的路径
 
 - `initExtent`（`Object`） - 初始地图范围，`{xmax, xmin, ymax, ymin}`。默认范围自适应屏幕显示，如果不想自适应则可调用 setExtent 方法设置范围并指定是否自适应
+
+- `mapBoxUser`（`string`）只有`mapType = 'mapBox'`这个参数才起作用，自定义底图自己的用户名，默认`mapbox`
+
+- `token` 当`mapType = 'mapBox'`或 `mapType = 'tdt'`底图需要的token值
 
 
 ```javascript

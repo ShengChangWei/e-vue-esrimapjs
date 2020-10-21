@@ -92,7 +92,10 @@ export default {
       type: String,
       default: '8e1a3b0631a1057635c6cc28bece1e31'
     },
-    
+    mapBoxUser: {
+      type: String,
+      default: undefined
+    }
   },
   data() {
     return {
@@ -426,7 +429,9 @@ export default {
           );
         });
       } else if (this.mapType === 'mapBox') {
-        this.getMapboxLayer(this.mapUrl).then((layers = []) => {
+        this.getMapboxLayer(
+          Array.isArray(this.mapUrl) ? this.mapUrl : [this.mapUrl]
+        ).then((layers = []) => {
           const baseamapLayerIds = [];
           layers.forEach((layer, index) => {
             baseamapLayerIds.push(layer.id);
@@ -870,14 +875,18 @@ export default {
      * @param layers 图层的代码
      * @returns {Promise<T>}
      */
-    getMapboxLayer(layers) {
+    getMapboxLayer(layers = []) {
       return new Promise((resolve) => {
         const mabBoxLayers = [];
+        const mapBoxUser = this.mapBoxUser ? this.mapBoxUser : 'mapbox';
         layers.forEach((layer) => {
           const templateUrl =
-              'https://api.mapbox.com/styles/v1/mapbox/' +
+              'https://api.mapbox.com/styles/v1/' +
+              mapBoxUser +
+              '/' +
               layer +
-              '/tiles/${level}/${col}/${row}@2x?access_token=' + this.token,
+              '/tiles/${level}/${col}/${row}@2x?access_token=' +
+              this.token,
             mapBoxLayer = new this.WebTiledLayer(templateUrl, {
               id: 'mapBox' + layer
               // subDomains: subDomains

@@ -44,6 +44,7 @@
     <button @click="boxMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="boxMapComponent.changeBaseLayer(1)">切换底图2</button>
     <button @click="boxMapComponent.changeBaseLayer(2)">切换底图3</button>
+      <button @click="boxMapComponent.changeBaseLayer(3)">切换底图3</button>
     <e-vue-esrimapjs :mapType="'mapBox'"
                      :mapUrl="['navigation-guidance-night-v2']"
                      :submapUrl="['streets-v10', 'satellite-v9']"
