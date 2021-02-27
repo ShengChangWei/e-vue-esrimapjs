@@ -59,7 +59,7 @@ export default {
     mapUrl: {
       type: [String, Array],
       default:
-        'http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer'
+        'http://10.165.9.60:8085/api/getAPIService/cce00a1d5b0546e297d1373d9d268b8f?token=2c91808875c071c40175c071c4830000'
     },
     submapUrl: {
       type: Array,
@@ -457,7 +457,11 @@ export default {
         // this.getMapboxLayer().then((layers) => {
         //   this.map.addLayer(layers);
         // });
-      } else if (this.mapType === 'other') {
+      } else if(this.mapType === 'sk') {
+        this.getSKLayer().then(layer => {
+           this.map.addLayer(layer);
+        })
+    }else if (this.mapType === 'other') {
         this.getOtherLayer();
       } else if (this.mapType === 'esri') {
         // 初始底图
@@ -896,6 +900,15 @@ export default {
         resolve(mabBoxLayers);
       });
     },
+    getSKLayer(layers = []) {
+      return new Promise((resolve) => {
+        const cycleMap = new this.WebTiledLayer(
+         this.mapUrl + '&x=${col}&y=${row}&z=${level}',
+      );
+        resolve(cycleMap);
+      });
+    },
+    
     // 加载其他组件
     getOtherLayer() {},
 

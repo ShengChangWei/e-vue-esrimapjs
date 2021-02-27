@@ -44,20 +44,21 @@
     <button @click="boxMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="boxMapComponent.changeBaseLayer(1)">切换底图2</button>
     <button @click="boxMapComponent.changeBaseLayer(2)">切换底图3</button>
-      <button @click="boxMapComponent.changeBaseLayer(3)">切换底图3</button>
+    <button @click="boxMapComponent.changeBaseLayer(3)">切换底图3</button>
     <e-vue-esrimapjs :mapType="'mapBox'"
-                     :mapUrl="['navigation-guidance-night-v2']"
+                      mapBoxUser="wlonline"
+                     :mapUrl="['ckgiv5olc0ej519pl3233mn7v']"
                      :submapUrl="['streets-v10', 'satellite-v9']"
                      :geoUrl="geoUrl"
                      :initExtent="initExtent2"
                      :gisApiUrl="gisApiUrl"
-                     token="pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NDg1bDA1cjYzM280NHJ5NzlvNDMifQ.d6e-nNyBDtmQCVwVNivz7A"
+                     token="pk.eyJ1Ijoid2xvbmxpbmUiLCJhIjoiY2s1MjFhMjM0MDN4OTNqcDhjbGY1d3N6ZiJ9.DqC7SXU6B5W-04B7vC6bBQ"
                      @mapReady="onBoxMapReady($event)">
     </e-vue-esrimapjs>
     <h2>ArcGIS地图服务</h2>
     <button @click="esriMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="esriMapComponent.changeBaseLayer(1)">切换底图2</button>
-
+    <!--  -->
     <e-vue-esrimapjs :isProxy="false"
                      :mapUrl="mapUrl"
                      :submapUrl="['http://server.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer']"
@@ -67,6 +68,16 @@
                      :esriCSSUrl="esriCSSUrl"
                      @baseLayerChange="onEsriBaseLayerChange($event)"
                      @mapReady="onEsriMapReady($event)">
+    </e-vue-esrimapjs>
+
+    <e-vue-esrimapjs :isProxy="false"
+                      :mapType="'sk'"
+                     :geoUrl="geoUrl"
+                     :initExtent="initExtent2"
+                     :gisApiUrl="gisApiUrl"
+                     :esriCSSUrl="esriCSSUrl"
+                     @mapReady="onSKMapReady($event)"
+                    >
     </e-vue-esrimapjs>
   </div>
 </template>
@@ -85,6 +96,8 @@ export default {
       tdtMap: '',
       boxMapComponent: '',
       boxMap: '',
+      skMapComponent: '',
+      skMap: '',
       esriMapComponent: '',
       esriMap: '',
       mapUrl:
@@ -113,9 +126,63 @@ export default {
   },
   mounted() {},
   methods: {
-    print() {
-      // window.print();
-    },
+   onSKMapReady($event) {
+ this.skMapComponent = $event;
+      this.skMap = this.skMapComponent.map;
+       this.areaLayer = new this.skMapComponent.GraphicsLayer();
+      this.skMap.addLayers([this.areaLayer]);
+      this.areaSymbol = new this.skMapComponent.SimpleFillSymbol({
+        // 区域符号
+        type: 'esriSFS',
+        style: 'esriSFSSolid',
+        color: [234, 144, 62, 30],
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSDash',
+          color: [255, 75, 160, 255],
+          width: 2
+        }
+      });
+
+      // const [x, y] = this.skMapComponent.WebMercatorUtils.lngLatToXY(
+      //   116.312555,
+      //   40.059036
+      // );
+      const point = new this.skMapComponent.Point(
+        116.26795,
+        39.8957,
+        this.skMap.SpatialReference
+      );
+      const symbol = new this.skMapComponent.SimpleMarkerSymbol({
+        // 点符号
+        color: [255, 153, 0],
+        size: 10,
+        type: 'esriSMS',
+        style: 'esriSMSCircle',
+        outline: {
+          type: 'esriSLS',
+          style: 'esriSLSSolid',
+          color: [255, 255, 255],
+          width: 1
+        }
+      });
+      const dataGra = new this.skMapComponent.Graphic(point, symbol);
+      this.areaLayer.add(dataGra);
+       const query = new this.skMapComponent.Query();
+      query.where = '2 > 1';
+      query.outSpatialReference = this.skMap.spatialReference;
+      query.returnGeometry = true;
+      query.outFields = ['*'];
+      const areaQueryTask = new this.skMapComponent.QueryTask(
+        'http://39.97.105.38:6080//arcgis/rest/services/HDSW/BASE_MAP/MapServer/3'
+      );
+      areaQueryTask.execute(query, (areas) => {
+        areas.features.forEach((area) => {
+          area.symbol = this.areaSymbol;
+          this.areaLayer.add(area);
+        });
+      });
+   },
     onBaiduMapReady($event) {
       this.baiduMapComponent = $event;
       this.baiduMap = this.baiduMapComponent.map;
