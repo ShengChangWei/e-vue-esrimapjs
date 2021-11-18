@@ -1,12 +1,28 @@
-# 忽略目录
-src/
+.DS_Store
+node_modules/
+examples/
 packages/
 public/
-.idea/
-node_modules/
-CHANGELOG.md
- 
-# 忽略指定文件
 vue.config.js
 babel.config.js
 *.map
+*.html
+ 
+# local env files
+.env.local
+.env.*.local
+ 
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+ 
+# Editor directories and files
+.history
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*

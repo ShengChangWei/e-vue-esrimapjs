@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h2>百度底图</h2>
+    <!--  <h2>百度底图</h2>
     <button @click="baiduMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="baiduMapComponent.changeBaseLayer(1)">切换底图2</button>
     <button @click="baiduMapComponent.changeBaseLayer(2)">切换底图3</button>
@@ -58,7 +58,6 @@
     <h2>ArcGIS地图服务</h2>
     <button @click="esriMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="esriMapComponent.changeBaseLayer(1)">切换底图2</button>
-    <!--  -->
     <e-vue-esrimapjs :isProxy="false"
                      :mapUrl="mapUrl"
                      :submapUrl="['http://server.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer']"
@@ -78,6 +77,20 @@
                      :esriCSSUrl="esriCSSUrl"
                      @mapReady="onSKMapReady($event)"
                     >
+    </e-vue-esrimapjs> -->
+    <h2>天地图墨卡托地图服务</h2>
+    <!--:submapUrl="[['img','cia'], ['ter','cta']]"   :mapUrl="['http://39.97.105.38:6080/arcgis/rest/services/huairou/vectorIndexMap/MapServer']"-->
+    <button @click="tdtMapComponent.changeBaseLayer(0)">切换底图1</button>
+    <button @click="tdtMapComponent.changeBaseLayer(1)">切换底图2</button>
+    <button @click="tdtMapComponent.changeBaseLayer(2)">切换底图3</button>
+    <e-vue-esrimapjs :mapType="'tdtMct'"
+                    :mapUrl="['vec','cva']"
+                    :submapUrl="[['img','cia'], ['ter','cta']]"
+                    :tileUrl="['http://39.97.105.38:6080/arcgis/rest/services/huairou/vectorIndexMap/MapServer']"
+                     token="8e1a3b0631a1057635c6cc28bece1e31"
+                     :initExtent="initExtent"
+                     @baseLayerChange="onTdtBaseLayerChange($event)"
+                     @mapReady="onTdtMapReady($event)">
     </e-vue-esrimapjs>
   </div>
 </template>
@@ -107,10 +120,10 @@ export default {
       gisApiUrl: 'http://js.arcgis.com/3.23/',
       esriCSSUrl: 'http://js.arcgis.com/3.23/esri/css/esri.css',
       initExtent: {
-        xmax: 116.39029888900006,
-        xmin: 116.04209077900009,
-        ymax: 40.161018230000025,
-        ymin: 39.885287565000056
+        xmax: 1.3071860317445237E7,
+        xmin: 1.287993118358697E7,
+        ymax: 5078952.762946327,
+        ymin: 4887023.62908806
       },
       initExtent2: {
         xmax: 12980277.986602597,
@@ -126,10 +139,10 @@ export default {
   },
   mounted() {},
   methods: {
-   onSKMapReady($event) {
- this.skMapComponent = $event;
+    onSKMapReady($event) {
+      this.skMapComponent = $event;
       this.skMap = this.skMapComponent.map;
-       this.areaLayer = new this.skMapComponent.GraphicsLayer();
+      this.areaLayer = new this.skMapComponent.GraphicsLayer();
       this.skMap.addLayers([this.areaLayer]);
       this.areaSymbol = new this.skMapComponent.SimpleFillSymbol({
         // 区域符号
@@ -168,7 +181,7 @@ export default {
       });
       const dataGra = new this.skMapComponent.Graphic(point, symbol);
       this.areaLayer.add(dataGra);
-       const query = new this.skMapComponent.Query();
+      const query = new this.skMapComponent.Query();
       query.where = '2 > 1';
       query.outSpatialReference = this.skMap.spatialReference;
       query.returnGeometry = true;
@@ -182,7 +195,7 @@ export default {
           this.areaLayer.add(area);
         });
       });
-   },
+    },
     onBaiduMapReady($event) {
       this.baiduMapComponent = $event;
       this.baiduMap = this.baiduMapComponent.map;
@@ -359,9 +372,14 @@ export default {
      */
     onTdtMapReady(event) {
       this.tdtMapComponent = event;
+      console.log(this.tdtMapComponent)
       this.tdtMap = this.tdtMapComponent.map;
       // this.tdtMapComponent.setExtent(this.initExtent);
       this.initTdtLayers();
+      const layer = new this.tdtMapComponent.ArcGISTiledMapServiceLayer(
+        'http://39.97.105.38:6080/arcgis/rest/services/huairou/vectorIndexMap/MapServer'
+      );
+      this.tdtMap.addLayer(layer);
     },
     onTdtBaseLayerChange($event) {},
 

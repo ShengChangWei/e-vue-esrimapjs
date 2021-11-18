@@ -1,30 +1,15 @@
 <template>
-  <div class="e-vue-map"
-       style="height: 100%;">
-    <div class="eMap"
-         ref="eMap"
-         style="height: 100%;"></div>
-    <div class="eNavigation"
-         v-if="enableNavigation">
-      <div class="zoom-map full-map"
-           title="全图"
-           @click="fullMap()">
-        <i class="fa fa-globe"
-           aria-hidden="true"></i>
+  <div class="e-vue-map" style="height: 100%;">
+    <div ref="eMap" class="eMap" style="height: 100%;"></div>
+    <div v-if="enableNavigation" class="eNavigation">
+      <div class="zoom-map full-map" title="全图" @click="fullMap()">
+        <i class="fa fa-globe" aria-hidden="true"></i>
       </div>
-      <div class="zoom-map zoom-in-map"
-           :class="{'zoom-disable': isMax}"
-           title="放大一级"
-           @click="zoomIn()">
-        <i class="fa fa-plus"
-           aria-hidden="true"></i>
+      <div class="zoom-map zoom-in-map" :class="{'zoom-disable': isMax}" title="放大一级" @click="zoomIn()">
+        <i class="fa fa-plus" aria-hidden="true"></i>
       </div>
-      <div class="zoom-map zoom-out-map"
-           :class="{'zoom-disable': isMin}"
-           title="缩小一级"
-           @click="zoomOut()">
-        <i class="fa fa-minus"
-           aria-hidden="true"></i>
+      <div class="zoom-map zoom-out-map" :class="{'zoom-disable': isMin}" title="缩小一级" @click="zoomOut()">
+        <i class="fa fa-minus" aria-hidden="true"></i>
       </div>
     </div>
   </div>
@@ -61,9 +46,13 @@ export default {
       default:
         'http://10.165.9.60:8085/api/getAPIService/cce00a1d5b0546e297d1373d9d268b8f?token=2c91808875c071c40175c071c4830000'
     },
+    tileUrl: {
+      type: [String, Array],
+      default: ''
+    },
     submapUrl: {
       type: Array,
-      default: function () {
+      default: function() {
         return [
           'http://server.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer'
         ];
@@ -71,7 +60,7 @@ export default {
     },
     initExtent: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           xmax: 106.39029888900006,
           xmin: 116.04209077900009,
@@ -457,11 +446,11 @@ export default {
         // this.getMapboxLayer().then((layers) => {
         //   this.map.addLayer(layers);
         // });
-      } else if(this.mapType === 'sk') {
-        this.getSKLayer().then(layer => {
-           this.map.addLayer(layer);
-        })
-    }else if (this.mapType === 'other') {
+      } else if (this.mapType === 'sk') {
+        this.getSKLayer().then((layer) => {
+          this.map.addLayer(layer);
+        });
+      } else if (this.mapType === 'other') {
         this.getOtherLayer();
       } else if (this.mapType === 'esri') {
         // 初始底图
@@ -482,9 +471,60 @@ export default {
           esriSubmapLayer.setVisibility(false);
           this.map.addLayer(esriSubmapLayer);
         });
+      } else if (this.mapType === 'tdtMct') {
+         // 初始底图
+        this.getTdtMctLayer(
+          Array.isArray(this.mapUrl) ? this.mapUrl : [this.mapUrl]
+        ).then((layers = []) => {
+          const baseamapLayerIds = [];
+          layers.forEach((layer, index) => {
+            baseamapLayerIds.push(layer.id);
+            this.map.addLayer(layer);
+          });
+          this.basemapIds.push(baseamapLayerIds);
+        });
+
+        // 切换的其它底图
+        this.submapUrl.forEach((submap = []) => {
+          this.getTdtMctLayer(Array.isArray(submap) ? submap : [submap]).then(
+            (layers = []) => {
+              const baseamapLayerIds = [];
+              layers.forEach((layer, index) => {
+                layer.setVisibility(false);
+                baseamapLayerIds.push(layer.id);
+                this.map.addLayer(layer);
+              });
+              this.basemapIds.push(baseamapLayerIds);
+            }
+          );
+        });
       } else {
         throw new Error('请指定输入属性 mapType 的值！');
       }
+    },
+    /**
+     * 获取天地图图层
+     * @param layers 图层的代码
+     * @returns {Promise<T>}
+     */
+    getTdtMctLayer(layers = []) {
+       return new Promise((resolve) => {
+        const subDomains = ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
+          tdtLayers = [];
+        layers.forEach((type) => {
+          const templateUrl =
+            'https://${subDomain}.tianditu.gov.cn/' +
+            type +
+            '_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
+            type + '&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={col}&TILEROW={row}&TILEMATRIX={level}&tk=' + this.token;
+          const tdtLayer = new this.WebTiledLayer(templateUrl, {
+            id: 'tdtMck_' + type,
+            subDomains: subDomains
+          });
+          tdtLayers.push(tdtLayer);
+        });
+        resolve(tdtLayers);
+      });
     },
     /**
      * 获取天地图图层
@@ -903,12 +943,12 @@ export default {
     getSKLayer(layers = []) {
       return new Promise((resolve) => {
         const cycleMap = new this.WebTiledLayer(
-         this.mapUrl + '&x=${col}&y=${row}&z=${level}',
-      );
+          this.mapUrl + '&x=${col}&y=${row}&z=${level}'
+        );
         resolve(cycleMap);
       });
     },
-    
+
     // 加载其他组件
     getOtherLayer() {},
 
