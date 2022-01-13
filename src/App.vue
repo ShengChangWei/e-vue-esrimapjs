@@ -79,7 +79,6 @@
                     >
     </e-vue-esrimapjs> -->
     <h2>天地图墨卡托地图服务</h2>
-    <!--:submapUrl="[['img','cia'], ['ter','cta']]"   :mapUrl="['http://39.97.105.38:6080/arcgis/rest/services/huairou/vectorIndexMap/MapServer']"-->
     <button @click="tdtMapComponent.changeBaseLayer(0)">切换底图1</button>
     <button @click="tdtMapComponent.changeBaseLayer(1)">切换底图2</button>
     <button @click="tdtMapComponent.changeBaseLayer(2)">切换底图3</button>

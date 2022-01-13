@@ -92,6 +92,19 @@
                      @baseLayerChange="onEsriBaseLayerChange($event)"
                      @mapReady="onEsriMapReady($event)">
     </e-vue-esrimapjs>
+     <h2>天地图墨卡托地图服务</h2>
+    <button @click="tdtMapComponent.changeBaseLayer(0)">切换底图1</button>
+    <button @click="tdtMapComponent.changeBaseLayer(1)">切换底图2</button>
+    <button @click="tdtMapComponent.changeBaseLayer(2)">切换底图3</button>
+    <e-vue-esrimapjs :mapType="'tdtMct'"
+                    :mapUrl="['vec','cva']"
+                    :submapUrl="[['img','cia'], ['ter','cta']]"
+                    :tileUrl="['http://39.97.105.38:6080/arcgis/rest/services/huairou/vectorIndexMap/MapServer']"
+                     token="8e1a3b0631a1057635c6cc28bece1e31"
+                     :initExtent="initExtent"
+                     @baseLayerChange="onTdtBaseLayerChange($event)"
+                     @mapReady="onTdtMapReady($event)">
+    </e-vue-esrimapjs>
   </div>
 </template>
 ```
@@ -210,7 +223,7 @@
 
 - `submapUrl`（`any[]`）- 其它切换的底图路径，如 `mapType='tdt'`，则 submapUrl 可从这四种地图类型 `vec（矢量图层）, cva（矢量标注）, img（影像图层）, cia（影像标注）` 通过数组形式组合使用。如 `mapType='google'`，则 mapUrl 可从这三种地图类型 `m（矢量图层）, p（地形图层）, y（影像图层）` 中选择。mapType='esri'，则 submapUrl 是完整的 ArcGIS 切片地图服务路径的数组
 
-- `mapType`（`string?='esri'`） - 基础底图类型，`tdt`：天地图（wkid: 4326），`google`：谷歌地图（wkid: 102113），`esri`：esri 地图服务（wkid: 看具体服务wkid）
+- `mapType`（`string?='esri'`） - 基础底图类型，`tdt`：天地图（wkid: 4326），`tdtMct`：天地图墨卡托地图`google`：谷歌地图（wkid: 102113），`esri`：esri 地图服务（wkid: 看具体服务wkid）
 
 - `geoUrl`（`string?='http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer'`） - 几何服务路径，默认是在线路径，最好配置自己的路径
 
